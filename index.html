@@ -8,8 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
     <title>App</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <style>
+    <link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.min.css" ><style>
     #main { margin-top: 50px; }
     .blocklabel { margin-right:3px; }
     </style>
@@ -54,7 +53,7 @@
 	<label for="rolematch">Output</label>
 	<input ng-model="rule.action" type="input" class="form-control" id="rulematch" placeholder="PRIVMSG %(0)s :%(1)s">
       </div>
-      <button type="submit" class="btn btn-primary btn-sm">Save</button>
+      <button type="submit" class="btn btn-primary btn-xs">Save</button>
     </form>
 
     <h3>Recent Events</h3>
@@ -98,7 +97,7 @@
                 <td><span ng-repeat="action in rule.actions">{{ action }}</span></td>
                 <td>{{ rule.exec.type }}</td>
                 <td>{{ rule.exec.value }}</td>
-                <td><span class="btn btn-danger btn-sm" ng-click="delete(rule)">Delete</span></td>
+                <td><span class="btn btn-danger btn-xs" ng-click="delete(rule)">Delete</span></td>
             </tr>
         </tbody>
 

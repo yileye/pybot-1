@@ -73,13 +73,16 @@ def mq_callback(ch, method, properties, body) :
                     test = args[int(k)] == v
                 except :
                     pass
+
                 if test :
+
                     print "Executing %s" % title
                     # See if there's an exec block
                     if execute :
                         typeof = execute.get('type')
                         valof = execute.get('value')
                         print "%s:%s" % (typeof, valof)
+
                         if typeof == 'JSON' :
                             try :
                                 result = requests.post(valof, json=dumps(body)).json().get('result')
