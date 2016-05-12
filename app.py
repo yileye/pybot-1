@@ -36,12 +36,19 @@ def rules() :
             rule = data.get('rules')
             pattern = str(rule.get('pattern'))
             match = rule.get('match')
+            typeof = rule.get('type')
+            valof = rule.get('val')
             action = rule.get('action')+"\r\n"
             title = rule.get('title')
             res = {
                 "title" : title,
                 "condition" : {
                     pattern:match
+                },
+                # There can only be one exec, it returns 'result' to the action
+                "exec" : {
+                    "type" : typeof,
+                    "value" : valof,
                 },
                 "actions" : [
                     action

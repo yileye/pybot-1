@@ -34,6 +34,24 @@
       </div>
       <div class="form-group">
 	<label for="rolematch">Action</label>
+	<select class="form-control" ng-model="rule.type">
+		<option>Select...</option>
+		<option value="JSON">JSON API Request</option>
+		<option>Ignore</option>
+		<option>Execute command</option>
+	</select>
+	<small>
+	Example JSON output : {"success":true, "result":"The text you want to send"}
+	<br />
+	Use %(result)s in your ACTION
+	<small>
+      </div>
+      <div class="form-group">
+	<label for="rolematch">JSON URL</label>
+	<input ng-model="rule.val" type="input" class="form-control" id="ruleval" placeholder="http://example.com/api/v1">
+      </div>
+      <div class="form-group">
+	<label for="rolematch">Output</label>
 	<input ng-model="rule.action" type="input" class="form-control" id="rulematch" placeholder="PRIVMSG %(0)s :%(1)s">
       </div>
       <button type="submit" class="btn btn-primary btn-sm">Save</button>
@@ -66,7 +84,9 @@
             <tr>
                 <th>Name</th>
                 <th>Pattern</th>
-                <th>Action</th>
+                <th>Output</th>
+		<th>Type</th>
+		<th>Value</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
@@ -74,8 +94,10 @@
         <tbody>
             <tr ng-repeat="rule in rules">
                 <td>{{ rule.title }}</td>
-                <td><span ng-repeat="cond in rule.condition">{{ cond }}</span></td>
+                <td>{{ rule.condition }}</td>
                 <td><span ng-repeat="action in rule.actions">{{ action }}</span></td>
+                <td>{{ rule.exec.type }}</td>
+                <td>{{ rule.exec.value }}</td>
                 <td><span class="btn btn-danger btn-sm" ng-click="delete(rule)">Delete</span></td>
             </tr>
         </tbody>

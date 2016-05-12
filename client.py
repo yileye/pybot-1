@@ -4,7 +4,7 @@ import string
 from uuid import uuid4
 from time import time
 from pprint import pprint
-from json import loads, dumps
+from bson.json_util import loads, dumps
 import threading
 import pika
 import socket
@@ -46,9 +46,7 @@ def start_socket() :
 				'time' : time(),
 				'event': "socket"
 			}
-			# Write JSON from the SOCKET to AMQ
 			channel.basic_publish(exchange='stream', routing_key='', body=dumps(body))
-			#print "AMQ : %s" % line
 
 def mq_callback(ch, method, properties, body) :
 
@@ -61,11 +59,13 @@ def mq_callback(ch, method, properties, body) :
 	raw = body.get("raw")
 	event = body.get("event")
 	col.log.insert(body)
+        result = None
 
         for rule in col.rules.find() :
             title = rule.get("title")
             condition = rule.get("condition")
             actions = rule.get("actions")
+            execute = rule.get('exec')
 
             for k,v in condition.iteritems() :
 
@@ -75,12 +75,27 @@ def mq_callback(ch, method, properties, body) :
                     pass
                 if test :
                     print "Executing %s" % title
+                    # See if there's an exec block
+                    if execute :
+                        typeof = execute.get('type')
+                        valof = execute.get('value')
+                        print "%s:%s" % (typeof, valof)
+                        if typeof == 'JSON' :
+                            try :
+                                result = requests.post(valof, json=dumps(body)).json().get('result')
+                                args.append(result)
+                            except :
+                                pass
+
                     for action in actions :
-                        try :
-                            msg = action % {str(k) : v for k, v in enumerate(args)}
-                            sock.send(msg)
-                        except :
-                            pass 
+                        # this stupid thing just replaces vars in the string
+                        argdict = dict(k for k in enumerate(args))
+                        argdict.update({'result': result})
+                        final = dict([(str(k), v) for k, v in argdict.items()])
+                        msg = action % final # {str(k) : v for k, v in enumerate(args)}
+                        print "MESSAGE : %s" % msg
+                        for ms in msg.split("\n") :
+                            sock.send(ms+"\r\n")
                 
 def init_mq() :
     result = channel.queue_declare(exclusive=True)
