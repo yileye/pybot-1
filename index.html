@@ -44,7 +44,7 @@
 	Example JSON output : {"success":true, "result":"The text you want to send"}
 	<br />
 	Use %(result)s in your ACTION
-	<small>
+	</small>
       </div>
       <div class="form-group">
 	<label for="rolematch">JSON URL</label>
@@ -105,45 +105,6 @@
     </table>
 
 
-    <h3>API Endpoints</h3>
-
-    <form ng-submit="save_api(api)">
-      <div class="form-group">
-	<label for="apititle">API Name</label>
-	<input ng-model="api.name" type="input" class="form-control" id="apiname" placeholder="My API">
-      </div>
-      <div class="form-group">
-	<label for="apiurl">URL</label>
-	<input ng-model="api.url" type="input" class="form-control" id="apiurl" placeholder="http://my-api.example.com">
-      </div>
-      <div class="form-group">
-	<label for="apikey">API Selector</label>
-	<input ng-model="api.key" type="input" class="form-control" id="apikey" placeholder="result">
-      </div>
-      <button type="submit" class="btn btn-primary btn-sm">Save</button>
-    </form>
-
-
-    <table class="table table-bordered table-striped table-hover table-condensed">
-
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>URL</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr ng-repeat="api in apis">
-                <td>{{ api.name }}</td>
-                <td>{{ api.url }}</td>
-                <td>{{ api.key }}</td>
-            </tr>
-        </tbody>
-
-    </table>
-
 <span ng-model="thing"></span>
 
 </div>
@@ -183,29 +144,9 @@ admin.controller("Ctrl", function($scope, $resource) {
         );
     };
 
-    function get_apis() {
-        endpoint.query({'endpoint':'api'}).$promise.then(
-            function(data) {
-                $scope.apis = data;
-            }
-        );
-    };
-
     setInterval(function() {
         get_logs()
     }, 5000);
-
-    $scope.save_api = function(api) {
-        endpoint.save({'endpoint':'api', 'api' : api}).$promise.then(
-            function(data) {
-                console.log(data);
-                get_apis();
-            },
-            function(error) {
-                console.log(error);
-            }
-        );
-    }
 
     $scope.save = function(rule) {
         endpoint.save({'endpoint':'rules', 'rules' : rule}).$promise.then(
