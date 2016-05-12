@@ -1,0 +1,18 @@
+rabbitmq :
+    image: rabbitmq:3-management   
+    restart: always
+    ports:
+    - 4369:4369
+    - 5671-5672:5671-5672
+    - 15671-15672:15671-15672
+    - 25672:25672
+
+mongo:
+    image: mongo
+    restart: always
+    ports: 
+    - 27017:27017
+
+    volumes:
+    - "${PWD}/data:/data/db"
+

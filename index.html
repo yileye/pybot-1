@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+    #main { margin-top: 50px; }
+    .blocklabel { margin-right:3px; }
+    </style>
+</head>
+
+<body ng-app="App" ng-controller="Ctrl">
+
+<div class="container-fluid" id="main">
+
+    <form ng-submit="save(rule)">
+      <div class="form-group">
+	<label for="rulename">Rule Name</label>
+	<input ng-model="rule.title" type="input" class="form-control" id="rulename" placeholder="My Rule">
+      </div>
+      <div class="form-group">
+	<label for="rulepattern">Argument</label>
+	<input ng-model="rule.pattern" type="input" class="form-control" id="rolepattern" placeholder="0">
+      </div>
+      <div class="form-group">
+	<label for="rolematch">Match</label>
+	<input ng-model="rule.match" type="input" class="form-control" id="rulematch" placeholder="PRIVMSG">
+      </div>
+      <div class="form-group">
+	<label for="rolematch">Action</label>
+	<input ng-model="rule.action" type="input" class="form-control" id="rulematch" placeholder="PRIVMSG %(0)s :%(1)s">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Save</button>
+    </form>
+
+    <h3>Recent Events</h3>
+
+    <table class="table table-bordered table-striped table-hover table-condensed">
+
+        <thead>
+            <tr>
+                <th>Event</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="log in logs">
+                <td>
+		<span class="blocklabel label label-primary" ng-repeat="arg in log.args track by $index" ng-click="set($index, arg)">{{ arg }} </span>
+		</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+	<h3>Rules</h3>
+    <table class="table table-bordered table-striped table-hover table-condensed">
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Pattern</th>
+                <th>Action</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="rule in rules">
+                <td>{{ rule.title }}</td>
+                <td><span ng-repeat="cond in rule.condition">{{ cond }}</span></td>
+                <td><span ng-repeat="action in rule.actions">{{ action }}</span></td>
+                <td><span class="btn btn-danger btn-sm" ng-click="delete(rule)">Delete</span></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+
+    <h3>API Endpoints</h3>
+
+    <form ng-submit="save_api(api)">
+      <div class="form-group">
+	<label for="apititle">API Name</label>
+	<input ng-model="api.name" type="input" class="form-control" id="apiname" placeholder="My API">
+      </div>
+      <div class="form-group">
+	<label for="apiurl">URL</label>
+	<input ng-model="api.url" type="input" class="form-control" id="apiurl" placeholder="http://my-api.example.com">
+      </div>
+      <div class="form-group">
+	<label for="apikey">API Selector</label>
+	<input ng-model="api.key" type="input" class="form-control" id="apikey" placeholder="result">
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Save</button>
+    </form>
+
+
+    <table class="table table-bordered table-striped table-hover table-condensed">
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="api in apis">
+                <td>{{ api.name }}</td>
+                <td>{{ api.url }}</td>
+                <td>{{ api.key }}</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+<span ng-model="thing"></span>
+
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular-resource.min.js"></script>
+<script type="text/javascript">
+
+var admin = angular.module("App", ['ngResource']);
+
+
+admin.controller("Ctrl", function($scope, $resource) {
+
+    $scope.rule = new Object();
+    $scope.rule.pattern = "";
+    $scope.rule.match = "";
+
+    var endpoint = $resource('/:endpoint', {endpoint: '@endpoint'});
+
+    get_rules();
+    get_logs();
+
+    function get_rules() {
+        endpoint.query({'endpoint':'rules'}).$promise.then(
+            function(data) {
+                $scope.rules = data;
+            }
+        );
+    };
+
+
+    function get_logs() {
+        endpoint.query({'endpoint':'logs'}).$promise.then(
+            function(data) {
+                $scope.logs = data;
+            }
+        );
+    };
+
+    function get_apis() {
+        endpoint.query({'endpoint':'api'}).$promise.then(
+            function(data) {
+                $scope.apis = data;
+            }
+        );
+    };
+
+    setInterval(function() {
+        get_logs()
+    }, 5000);
+
+    $scope.save_api = function(api) {
+        endpoint.save({'endpoint':'api', 'api' : api}).$promise.then(
+            function(data) {
+                console.log(data);
+                get_apis();
+            },
+            function(error) {
+                console.log(error);
+            }
+        );
+    }
+
+    $scope.save = function(rule) {
+        endpoint.save({'endpoint':'rules', 'rules' : rule}).$promise.then(
+            function(data) {
+                console.log(data);
+                get_rules();
+            },
+            function(error) {
+                console.log(error);
+            }
+        );
+    }
+
+    $scope.set = function(index, arg) {
+        $scope.rule.pattern = index;
+        $scope.rule.match = arg;
+    };
+
+    $scope.delete = function(rule) {
+        var oid = rule._id.$oid;
+        endpoint.get({'endpoint':'delete', 'ruleid' : oid}).$promise.then(
+            function(data) {
+                get_rules();
+            }
+        );
+    };
+
+});
+
+
+
+</script>
+</body>
+</html>
+
