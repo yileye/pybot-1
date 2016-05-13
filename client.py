@@ -60,6 +60,7 @@ def mq_callback(ch, method, properties, body) :
 	event = body.get("event")
 	col.log.insert(body)
         result = None
+        pprint(body)
 
         for rule in col.rules.find() :
             title = rule.get("title")
