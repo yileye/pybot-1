@@ -11,7 +11,7 @@ import socket
 from sys import stdin, stdout, exit
 from pymongo import MongoClient
 
-con = MongoClient()
+con = MongoClient('mongo')
 col = con.socket
 
 # Socket client host and port
@@ -22,7 +22,7 @@ mode = "client"
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Start consuming the message queue for things to do
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 channel = connection.channel()
 channel.exchange_declare(exchange='stream', type='fanout')
 

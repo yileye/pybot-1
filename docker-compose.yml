@@ -16,3 +16,28 @@ mongo:
     volumes:
     - "${PWD}/data:/data/db"
 
+client:
+    build: .
+    restart: always
+    volumes:
+    - ${PWD}/client.py:/client.py
+    links:
+    - mongo:mongo
+    - rabbitmq:rabbitmq
+    entrypoint:
+    - /entrypoint.sh
+
+app:
+    build: .
+    restart: always
+    volumes:
+    - ${PWD}/app:/app
+    links:
+    - mongo:mongo
+    - rabbitmq:rabbitmq
+    entrypoint:
+    - python
+    - /app/app.py
+    ports:
+    - 8080:5000
+

@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bson.json_util import loads, dumps
 from bson import ObjectId
 
-con = MongoClient()
+con = MongoClient('mongo')
 col = con.socket
 
 app = Flask(__name__)
@@ -68,3 +68,4 @@ def api() :
 if __name__ == '__main__' :
     app.debug = True
     app.run(host="0.0.0.0", port=5000)
+
