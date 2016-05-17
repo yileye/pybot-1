@@ -4,7 +4,7 @@ PyBot is a work-in-progress socket messaging client that allows connecting to ar
 
 PyBot can be used to reverse engineer socket messaging protocols and was originally created as an IRC bot.
 
-![PyBot UI](screenshot.png?raw=true "PyBot UI")
+![PyBot UI](ui.png?raw=true "PyBot UI")
 
 ### Running
 
