@@ -96,7 +96,10 @@ def mq_callback(ch, method, properties, body) :
                         argdict = dict(k for k in enumerate(args))
                         argdict.update({'result': result})
                         final = dict([(str(k), v) for k, v in argdict.items()])
-                        msg = action % final # {str(k) : v for k, v in enumerate(args)}
+                        try :
+                            msg = action % final # {str(k) : v for k, v in enumerate(args)}
+                        except :
+                            return
                         print "MESSAGE : %s" % msg
                         for ms in msg.split("\n") :
                             sock.send(ms+"\r\n")
